@@ -51,7 +51,7 @@ Traditional torrent files require:
 
 ## Next Steps
 
-- [Getting Started](/en/getting-started) - Learn how to quickly use Magneto
-- [Installation](/en/installation) - Detailed installation instructions
-- [Usage Guide](/en/usage) - Learn how to use various features
+- [Getting Started](/getting-started) - Learn how to quickly use Magneto
+- [Installation](/installation) - Detailed installation instructions
+- [Usage Guide](/usage) - Learn how to use various features
 

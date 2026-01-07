@@ -158,6 +158,6 @@ pip install colorama
 
 After installation, you can:
 
-- [Getting Started](/en/getting-started) - Learn basic usage
-- [Usage Guide](/en/usage) - Learn all features
+- [Getting Started](/getting-started) - Learn basic usage
+- [Usage Guide](/usage) - Learn all features
 

@@ -294,6 +294,6 @@ Failed: 2
 
 ## Next Steps
 
-- [API Reference](/en/api-reference) - Learn how to use Magneto in code
-- [Getting Started](/en/getting-started) - Review basic usage
+- [API Reference](/api-reference) - Learn how to use Magneto in code
+- [Getting Started](/getting-started) - Review basic usage
 

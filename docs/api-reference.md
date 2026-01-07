@@ -366,6 +366,6 @@ from pathlib import Path
 
 ## Next Steps
 
-- [Usage Guide](/en/usage) - Learn command-line usage
-- [Getting Started](/en/getting-started) - Learn basic usage
+- [Usage Guide](/usage) - Learn command-line usage
+- [Getting Started](/getting-started) - Learn basic usage
 

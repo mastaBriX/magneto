@@ -90,7 +90,7 @@ magneto folder/ -v
 
 ## Next Steps
 
-- [Installation Guide](/en/installation) - Learn detailed installation methods
-- [Usage Guide](/en/usage) - Learn more advanced features
-- [API Reference](/en/api-reference) - View complete API documentation
+- [Installation Guide](/installation) - Learn detailed installation methods
+- [Usage Guide](/usage) - Learn more advanced features
+- [API Reference](/api-reference) - View complete API documentation
 
