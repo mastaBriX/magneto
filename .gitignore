@@ -12,6 +12,3 @@ wheels/
 # Test
 .pytest_cache/
 .coverage
-
-# Pre-commit
-.pre-commit-config.yaml.bak

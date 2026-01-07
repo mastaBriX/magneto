@@ -204,46 +204,6 @@ pytest -m unit
 pytest -m integration
 ```
 
-## 🔧 Pre-commit Hooks
-
-The project uses pre-commit hooks to ensure code quality and run tests before committing.
-
-### Setup
-
-```bash
-# Install pre-commit hooks (Linux/Mac)
-bash scripts/setup-hooks.sh
-
-# Install pre-commit hooks (Windows)
-powershell scripts/setup-hooks.ps1
-
-# Or manually
-pip install pre-commit
-pre-commit install
-```
-
-### Usage
-
-Pre-commit hooks will automatically run on `git commit`. You can also run them manually:
-
-```bash
-# Run all hooks on all files
-pre-commit run --all-files
-
-# Run specific hook
-pre-commit run pytest
-
-# Skip hooks (not recommended)
-git commit --no-verify
-```
-
-### Hooks Included
-
-- **pytest** - Runs all tests before commit
-- **black** - Auto-formats Python code
-- **ruff** - Lints and fixes Python code
-- **File checks** - Checks for trailing whitespace, large files, etc.
-
 ## 🏗️ Project Structure
 
 ```
