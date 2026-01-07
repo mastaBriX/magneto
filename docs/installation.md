@@ -46,7 +46,7 @@ uv tree
 
 ```bash
 # Clone repository (if not already done)
-git clone https://github.com/yourusername/magneto.git
+git clone https://github.com/mastaBriX/magneto.git
 cd magneto
 
 # Install project (pip automatically reads pyproject.toml)

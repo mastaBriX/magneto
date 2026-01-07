@@ -33,7 +33,7 @@ Examples:
   %(prog)s folder/ --stdout -f links_only  # Print only magnet links to stdout
   %(prog)s --help                          # Show help information
 
-For more information, visit: https://github.com/yourusername/magneto
+For more information, visit: https://github.com/mastaBriX/magneto
             """,
             add_help=True
         )

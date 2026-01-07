@@ -46,7 +46,7 @@ uv tree
 
 ```bash
 # リポジトリをクローン（まだの場合）
-git clone https://github.com/yourusername/magneto.git
+git clone https://github.com/mastaBriX/magneto.git
 cd magneto
 
 # プロジェクトをインストール（pip は自動的に pyproject.toml を読み取る）

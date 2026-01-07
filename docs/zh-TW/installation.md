@@ -46,7 +46,7 @@ uv tree
 
 ```bash
 # 複製儲存庫（如果還沒有）
-git clone https://github.com/yourusername/magneto.git
+git clone https://github.com/mastaBriX/magneto.git
 cd magneto
 
 # 安裝專案（pip 會自動讀取 pyproject.toml）

@@ -4,6 +4,9 @@ export default defineConfig({
   title: 'Magneto',
   description: 'A powerful command-line tool for batch converting torrent files to magnet links',
   
+  // GitHub Pages base path
+  base: '/magneto/',
+  
   // 默认语言
   defaultLocale: 'en',
   
@@ -57,7 +60,7 @@ export default defineConfig({
         },
         // 社交链接
         socialLinks: [
-          { icon: 'github', link: 'https://github.com/yourusername/magneto' }
+          { icon: 'github', link: 'https://github.com/mastaBriX/magneto' }
         ],
         // 页脚
         footer: {
@@ -66,7 +69,7 @@ export default defineConfig({
         },
         // 编辑链接
         editLink: {
-          pattern: 'https://github.com/yourusername/magneto/edit/main/docs/:path',
+          pattern: 'https://github.com/mastaBriX/magneto/edit/main/docs/:path',
           text: 'Edit this page on GitHub'
         }
       }
@@ -108,14 +111,14 @@ export default defineConfig({
           provider: 'local'
         },
         socialLinks: [
-          { icon: 'github', link: 'https://github.com/yourusername/magneto' }
+          { icon: 'github', link: 'https://github.com/mastaBriX/magneto' }
         ],
         footer: {
           message: 'Released under the MIT License.',
           copyright: 'Copyright © 2024 Magneto Contributors'
         },
         editLink: {
-          pattern: 'https://github.com/yourusername/magneto/edit/main/docs/:path',
+          pattern: 'https://github.com/mastaBriX/magneto/edit/main/docs/:path',
           text: '在 GitHub 上编辑此页'
         }
       }
@@ -157,14 +160,14 @@ export default defineConfig({
           provider: 'local'
         },
         socialLinks: [
-          { icon: 'github', link: 'https://github.com/yourusername/magneto' }
+          { icon: 'github', link: 'https://github.com/mastaBriX/magneto' }
         ],
         footer: {
           message: 'Released under the MIT License.',
           copyright: 'Copyright © 2024 Magneto Contributors'
         },
         editLink: {
-          pattern: 'https://github.com/yourusername/magneto/edit/main/docs/:path',
+          pattern: 'https://github.com/mastaBriX/magneto/edit/main/docs/:path',
           text: '在 GitHub 上編輯此頁'
         }
       }
@@ -206,14 +209,14 @@ export default defineConfig({
           provider: 'local'
         },
         socialLinks: [
-          { icon: 'github', link: 'https://github.com/yourusername/magneto' }
+          { icon: 'github', link: 'https://github.com/mastaBriX/magneto' }
         ],
         footer: {
           message: 'Released under the MIT License.',
           copyright: 'Copyright © 2024 Magneto Contributors'
         },
         editLink: {
-          pattern: 'https://github.com/yourusername/magneto/edit/main/docs/:path',
+          pattern: 'https://github.com/mastaBriX/magneto/edit/main/docs/:path',
           text: 'GitHub でこのページを編集'
         }
       }
@@ -255,14 +258,14 @@ export default defineConfig({
           provider: 'local'
         },
         socialLinks: [
-          { icon: 'github', link: 'https://github.com/yourusername/magneto' }
+          { icon: 'github', link: 'https://github.com/mastaBriX/magneto' }
         ],
         footer: {
           message: 'Released under the MIT License.',
           copyright: 'Copyright © 2024 Magneto Contributors'
         },
         editLink: {
-          pattern: 'https://github.com/yourusername/magneto/edit/main/docs/:path',
+          pattern: 'https://github.com/mastaBriX/magneto/edit/main/docs/:path',
           text: 'Редактировать эту страницу на GitHub'
         }
       }

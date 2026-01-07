@@ -31,9 +31,9 @@ dependencies = [
 magneto = "main:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/magneto"
-Repository = "https://github.com/yourusername/magneto"
-Issues = "https://github.com/yourusername/magneto/issues"
+Homepage = "https://github.com/mastaBriX/magneto"
+Repository = "https://github.com/mastaBriX/magneto"
+Issues = "https://github.com/mastaBriX/magneto/issues"
 
 [build-system]
 requires = ["hatchling"]
