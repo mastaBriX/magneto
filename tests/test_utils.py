@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from magneto.utils import collect_torrent_files, format_file_size, get_output_path
+from magneto.utils import collect_torrent_files, format_file_size, get_output_path, is_url
 
 
 @pytest.mark.unit
@@ -180,4 +180,76 @@ class TestFormatFileSize:
         large = 1024 * 1024 * 1024 * 1024 * 1024
         result = format_file_size(large)
         assert "PB" in result
+
+
+@pytest.mark.unit
+class TestIsUrl:
+    """Test cases for is_url function"""
+    
+    def test_is_url_http(self):
+        """Test HTTP URL detection"""
+        assert is_url("http://example.com/file.torrent") is True
+    
+    def test_is_url_https(self):
+        """Test HTTPS URL detection"""
+        assert is_url("https://example.com/file.torrent") is True
+    
+    def test_is_url_with_path(self):
+        """Test URL with path"""
+        assert is_url("https://example.com/path/to/file.torrent") is True
+    
+    def test_is_url_with_port(self):
+        """Test URL with port"""
+        assert is_url("http://example.com:8080/file.torrent") is True
+    
+    def test_is_url_localhost(self):
+        """Test localhost URL"""
+        assert is_url("http://localhost/file.torrent") is True
+        assert is_url("http://127.0.0.1/file.torrent") is True
+    
+    def test_is_url_not_url_file_path(self):
+        """Test that file path is not detected as URL"""
+        assert is_url("/path/to/file.torrent") is False
+        assert is_url("file.torrent") is False
+        assert is_url("./file.torrent") is False
+        assert is_url("../file.torrent") is False
+        assert is_url("C:\\path\\to\\file.torrent") is False
+    
+    def test_is_url_not_url_relative_path(self):
+        """Test that relative path is not detected as URL"""
+        assert is_url("folder/file.torrent") is False
+    
+    def test_is_url_not_url_empty_string(self):
+        """Test that empty string is not detected as URL"""
+        assert is_url("") is False
+    
+    def test_is_url_not_url_none(self):
+        """Test that None is not detected as URL"""
+        assert is_url(None) is False
+    
+    def test_is_url_with_query_params(self):
+        """Test URL with query parameters"""
+        assert is_url("https://example.com/file.torrent?token=abc123") is True
+    
+    def test_is_url_with_fragment(self):
+        """Test URL with fragment"""
+        assert is_url("https://example.com/file.torrent#section") is True
+    
+    def test_is_url_whitespace_trimmed(self):
+        """Test that whitespace is trimmed"""
+        assert is_url("  http://example.com/file.torrent  ") is True
+    
+    def test_is_url_invalid_scheme(self):
+        """Test URL with invalid scheme"""
+        assert is_url("ftp://example.com/file.torrent") is False
+        assert is_url("file:///path/to/file.torrent") is False
+    
+    def test_is_url_missing_scheme(self):
+        """Test string missing scheme"""
+        assert is_url("example.com/file.torrent") is False
+    
+    def test_is_url_malformed(self):
+        """Test malformed URL"""
+        assert is_url("http://") is False
+        assert is_url("https://") is False
 

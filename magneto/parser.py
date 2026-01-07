@@ -25,6 +25,7 @@ class ArgumentParser:
 Examples:
   %(prog)s file.torrent                    # Convert a single file
   %(prog)s folder/                         # Convert all .torrent files in folder
+  %(prog)s http://example.com/file.torrent # Download and convert from URL
   %(prog)s folder/ -o output.txt           # Specify output file
   %(prog)s folder/ -r -f json              # Recursive search and output JSON format
   %(prog)s folder/ -v --include-trackers   # Verbose output with trackers
@@ -43,7 +44,7 @@ For more information, visit: https://github.com/yourusername/magneto
             type=str,
             nargs='?',
             default=None,
-            help='Input torrent file or folder path containing torrent files'
+            help='Input torrent file, folder path, or URL of torrent file'
         )
         
         # Output options
@@ -136,9 +137,12 @@ For more information, visit: https://github.com/yourusername/magneto
             parser.print_help()
             sys.exit(1)
         
-        input_path = Path(parsed_args.input)
-        if not input_path.exists():
-            print(f"Error: Path does not exist: {input_path}", file=sys.stderr)
-            sys.exit(1)
+        # Check if input is URL - if not, validate path exists
+        from magneto.utils import is_url
+        if not is_url(parsed_args.input):
+            input_path = Path(parsed_args.input)
+            if not input_path.exists():
+                print(f"Error: Path does not exist: {input_path}", file=sys.stderr)
+                sys.exit(1)
         
         return parsed_args

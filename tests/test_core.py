@@ -2,6 +2,7 @@
 Unit tests for core conversion module
 """
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -226,4 +227,169 @@ class TestTorrentConverter:
         converter = TorrentConverter()
         with pytest.raises(ValueError, match="Torrent file is missing info field"):
             converter.convert(mock_torrent_file_missing_info)
+
+
+@pytest.mark.unit
+class TestTorrentConverterDownload:
+    """Test cases for TorrentConverter download and URL conversion methods"""
+    
+    def test_download_torrent_file_success(self, mock_torrent_bytes):
+        """Test successful torrent file download"""
+        converter = TorrentConverter()
+        test_url = "http://example.com/file.torrent"
+        
+        # Mock urlopen to return torrent bytes
+        mock_response = MagicMock()
+        mock_response.read.return_value = mock_torrent_bytes
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=None)
+        
+        with patch('magneto.core.urllib.request.urlopen', return_value=mock_response):
+            data = converter.download_torrent_file(test_url)
+        
+        assert isinstance(data, bytes)
+        assert len(data) > 0
+        assert data == mock_torrent_bytes
+    
+    def test_download_torrent_file_empty_response(self):
+        """Test download with empty response"""
+        converter = TorrentConverter()
+        test_url = "http://example.com/empty.torrent"
+        
+        mock_response = MagicMock()
+        mock_response.read.return_value = b''
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=None)
+        
+        with patch('magneto.core.urllib.request.urlopen', return_value=mock_response):
+            with pytest.raises(IOError, match="Downloaded file is empty"):
+                converter.download_torrent_file(test_url)
+    
+    def test_download_torrent_file_url_error(self):
+        """Test download with URL error"""
+        converter = TorrentConverter()
+        test_url = "http://example.com/file.torrent"
+        
+        from urllib.error import URLError
+        with patch('magneto.core.urllib.request.urlopen', side_effect=URLError("Connection failed")):
+            with pytest.raises(IOError, match="Unable to download from URL"):
+                converter.download_torrent_file(test_url)
+    
+    def test_download_torrent_file_timeout(self):
+        """Test download with timeout"""
+        converter = TorrentConverter()
+        test_url = "http://example.com/file.torrent"
+        
+        import socket
+        with patch('magneto.core.urllib.request.urlopen', side_effect=socket.timeout("Timeout")):
+            with pytest.raises(IOError, match="Error downloading torrent file"):
+                converter.download_torrent_file(test_url, timeout=1)
+    
+    def test_download_torrent_file_user_agent(self, mock_torrent_bytes):
+        """Test that User-Agent header is set"""
+        converter = TorrentConverter()
+        test_url = "http://example.com/file.torrent"
+        
+        mock_response = MagicMock()
+        mock_response.read.return_value = mock_torrent_bytes
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=None)
+        
+        with patch('magneto.core.urllib.request.urlopen', return_value=mock_response) as mock_urlopen:
+            with patch('magneto.core.urllib.request.Request') as mock_request:
+                mock_req_instance = MagicMock()
+                mock_request.return_value = mock_req_instance
+                
+                converter.download_torrent_file(test_url)
+                
+                # Verify Request was created with URL
+                mock_request.assert_called_once_with(test_url)
+                # Verify User-Agent header was added
+                mock_req_instance.add_header.assert_called_once()
+                call_args = mock_req_instance.add_header.call_args[0]
+                assert call_args[0] == 'User-Agent'
+    
+    def test_convert_from_url_success(self, mock_torrent_bytes, expected_info_hash):
+        """Test successful conversion from URL"""
+        converter = TorrentConverter()
+        test_url = "http://example.com/file.torrent"
+        
+        mock_response = MagicMock()
+        mock_response.read.return_value = mock_torrent_bytes
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=None)
+        
+        with patch('magneto.core.urllib.request.urlopen', return_value=mock_response):
+            magnet_link, info_hash, metadata = converter.convert_from_url(test_url)
+        
+        assert isinstance(magnet_link, str)
+        assert magnet_link.startswith("magnet:")
+        assert info_hash == expected_info_hash
+        assert isinstance(metadata, dict)
+        assert 'name' in metadata
+        assert 'source_url' in metadata
+        assert metadata['source_url'] == test_url
+        assert 'file_size' in metadata
+        assert metadata['file_size'] == len(mock_torrent_bytes)
+    
+    def test_convert_from_url_with_trackers(self, mock_torrent_bytes):
+        """Test conversion from URL with trackers"""
+        converter = TorrentConverter()
+        test_url = "http://example.com/file.torrent"
+        
+        mock_response = MagicMock()
+        mock_response.read.return_value = mock_torrent_bytes
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=None)
+        
+        with patch('magneto.core.urllib.request.urlopen', return_value=mock_response):
+            magnet_link, info_hash, metadata = converter.convert_from_url(
+                test_url,
+                include_trackers=True
+            )
+        
+        assert "&tr=" in magnet_link
+        assert len(metadata['trackers']) > 0
+    
+    def test_convert_from_url_without_trackers(self, mock_torrent_bytes):
+        """Test conversion from URL without trackers"""
+        converter = TorrentConverter()
+        test_url = "http://example.com/file.torrent"
+        
+        mock_response = MagicMock()
+        mock_response.read.return_value = mock_torrent_bytes
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=None)
+        
+        with patch('magneto.core.urllib.request.urlopen', return_value=mock_response):
+            magnet_link, info_hash, metadata = converter.convert_from_url(
+                test_url,
+                include_trackers=False
+            )
+        
+        assert isinstance(metadata['trackers'], list)
+    
+    def test_convert_from_url_download_error(self):
+        """Test conversion from URL when download fails"""
+        converter = TorrentConverter()
+        test_url = "http://example.com/file.torrent"
+        
+        from urllib.error import URLError
+        with patch('magneto.core.urllib.request.urlopen', side_effect=URLError("Connection failed")):
+            with pytest.raises(IOError, match="Unable to download from URL"):
+                converter.convert_from_url(test_url)
+    
+    def test_convert_from_url_invalid_torrent(self):
+        """Test conversion from URL with invalid torrent data"""
+        converter = TorrentConverter()
+        test_url = "http://example.com/invalid.torrent"
+        
+        mock_response = MagicMock()
+        mock_response.read.return_value = b'Invalid torrent data'
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=None)
+        
+        with patch('magneto.core.urllib.request.urlopen', return_value=mock_response):
+            with pytest.raises(ValueError, match="Unable to parse torrent file"):
+                converter.convert_from_url(test_url)
 

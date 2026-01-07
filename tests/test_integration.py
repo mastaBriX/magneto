@@ -2,13 +2,14 @@
 Integration tests for the complete workflow
 """
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from magneto.core import TorrentConverter   
 from magneto.parser import ArgumentParser   
 from magneto.ui import UI   
-from magneto.utils import collect_torrent_files
+from magneto.utils import collect_torrent_files, is_url
 
 
 @pytest.mark.integration
@@ -116,4 +117,98 @@ class TestIntegration:
         data = json.loads(output_file.read_text())
         assert isinstance(data, list)
         assert data[0]["magnet"] == magnet_link
+    
+    def test_workflow_url_input(self, mock_torrent_bytes, expected_info_hash):
+        """Test complete workflow with URL input"""
+        test_url = "http://example.com/file.torrent"
+        
+        # Mock urlopen to return torrent bytes
+        mock_response = MagicMock()
+        mock_response.read.return_value = mock_torrent_bytes
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=None)
+        
+        with patch('magneto.core.urllib.request.urlopen', return_value=mock_response):
+            # Parse arguments with URL
+            args = ArgumentParser.parse_args([test_url])
+            
+            # Verify URL is detected
+            assert is_url(args.input)
+            
+            # Initialize components
+            converter = TorrentConverter()
+            ui = UI(verbose=args.verbose, quiet=args.quiet)
+            
+            # Convert from URL
+            magnet_link, info_hash, metadata = converter.convert_from_url(
+                test_url,
+                include_trackers=args.include_trackers
+            )
+            
+            results = [(test_url, magnet_link, info_hash, metadata)]
+            
+            # Verify results
+            assert len(results) == 1
+            assert results[0][1].startswith("magnet:")
+            assert results[0][2] == expected_info_hash
+            assert results[0][3]['source_url'] == test_url
+    
+    def test_workflow_url_input_with_trackers(self, mock_torrent_bytes):
+        """Test URL input workflow with trackers"""
+        test_url = "http://example.com/file.torrent"
+        
+        mock_response = MagicMock()
+        mock_response.read.return_value = mock_torrent_bytes
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=None)
+        
+        with patch('magneto.core.urllib.request.urlopen', return_value=mock_response):
+            args = ArgumentParser.parse_args([test_url, '--include-trackers'])
+            
+            converter = TorrentConverter()
+            magnet_link, info_hash, metadata = converter.convert_from_url(
+                test_url,
+                include_trackers=True
+            )
+            
+            assert "&tr=" in magnet_link
+            assert len(metadata['trackers']) > 0
+    
+    def test_workflow_url_input_stdout(self, mock_torrent_bytes, capsys):
+        """Test URL input workflow with stdout output"""
+        test_url = "http://example.com/file.torrent"
+        
+        mock_response = MagicMock()
+        mock_response.read.return_value = mock_torrent_bytes
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock(return_value=None)
+        
+        with patch('magneto.core.urllib.request.urlopen', return_value=mock_response):
+            args = ArgumentParser.parse_args([
+                test_url,
+                '--stdout',
+                '--format', 'links_only'
+            ])
+            
+            converter = TorrentConverter()
+            ui = UI(quiet=True)
+            
+            magnet_link, info_hash, metadata = converter.convert_from_url(test_url)
+            results = [(test_url, magnet_link, info_hash, metadata)]
+            
+            ui.print_results(results, args.format)
+            captured = capsys.readouterr()
+            assert magnet_link in captured.out
+    
+    def test_workflow_url_input_parser_validation(self):
+        """Test that parser correctly validates URL input"""
+        test_url = "http://example.com/file.torrent"
+        
+        # Should not raise error for valid URL
+        args = ArgumentParser.parse_args([test_url])
+        assert args.input == test_url
+        
+        # Should raise error for invalid path
+        with pytest.raises(SystemExit):
+            ArgumentParser.parse_args(["/nonexistent/path/file.torrent"])
 

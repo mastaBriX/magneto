@@ -5,6 +5,9 @@ description = "Command-line tool for batch converting torrent files to magnet li
 readme = "README.md"
 requires-python = ">=3.7"
 license = {text = "MIT"}
+authors = [
+    {name = "Yuze Xie", email = "xyzbrianx@gmail.com"}
+]
 keywords = ["torrent", "magnet", "bittorrent", "converter"]
 classifiers = [
     "Development Status :: 4 - Beta",

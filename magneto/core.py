@@ -2,7 +2,9 @@
 Core conversion module - Handles torrent file to magnet link conversion
 """
 import hashlib
+import urllib.error
 import urllib.parse
+import urllib.request
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
@@ -20,6 +22,39 @@ class TorrentConverter:
             raise ImportError(
                 "bencode module is not installed. Please run: pip install bencode.py"
             )
+    
+    def download_torrent_file(self, url: str, timeout: int = 30) -> bytes:
+        """
+        Download torrent file from URL
+        
+        Args:
+            url: URL of the torrent file
+            timeout: Request timeout in seconds (default: 30)
+            
+        Returns:
+            Binary content of the torrent file
+            
+        Raises:
+            IOError: Download failed
+        """
+        try:
+            # Create request with User-Agent header
+            req = urllib.request.Request(url)
+            req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
+            
+            # Download the file
+            with urllib.request.urlopen(req, timeout=timeout) as response:
+                torrent_data = response.read()
+                
+            if not torrent_data:
+                raise IOError(f"Downloaded file is empty: {url}")
+                
+            return torrent_data
+            
+        except urllib.error.URLError as e:
+            raise IOError(f"Unable to download from URL {url}: {e}")
+        except Exception as e:
+            raise IOError(f"Error downloading torrent file from {url}: {e}")
     
     def read_torrent_file(self, torrent_path: Path) -> bytes:
         """
@@ -208,6 +243,46 @@ class TorrentConverter:
             'trackers': trackers if include_trackers else [],
             'info_hash': info_hash,
             'file_size': torrent_path.stat().st_size if torrent_path.exists() else 0
+        }
+        
+        return magnet_link, info_hash, metadata
+    
+    def convert_from_url(self, url: str, include_trackers: bool = False) -> Tuple[str, str, Dict]:
+        """
+        Download torrent file from URL and convert to magnet link
+        
+        Args:
+            url: URL of the torrent file
+            include_trackers: Whether to include trackers in the magnet link
+            
+        Returns:
+            Tuple of (magnet_link, info_hash, metadata)
+            metadata contains: name, trackers, etc.
+            
+        Raises:
+            IOError: Download failed
+            ValueError: Torrent file format error
+        """
+        # Download torrent file
+        torrent_data_bytes = self.download_torrent_file(url)
+        
+        # Parse torrent data
+        torrent_data = self.parse_torrent(torrent_data_bytes)
+        info_hash = self.get_info_hash(torrent_data)
+        
+        # Get metadata
+        name = self.get_torrent_name(torrent_data)
+        trackers = self.get_trackers(torrent_data) if include_trackers else None
+        
+        # Generate magnet link
+        magnet_link = self.generate_magnet_link(info_hash, name, trackers)
+        
+        metadata = {
+            'name': name,
+            'trackers': trackers if include_trackers else [],
+            'info_hash': info_hash,
+            'file_size': len(torrent_data_bytes),
+            'source_url': url
         }
         
         return magnet_link, info_hash, metadata
