@@ -5,6 +5,8 @@ import argparse
 import sys
 from pathlib import Path
 
+from . import __version__
+
 
 class ArgumentParser:
     """Command-line argument parser"""
@@ -113,7 +115,7 @@ For more information, visit: https://github.com/mastaBriX/magneto
         other_group.add_argument(
             '--version',
             action='version',
-            version='%(prog)s 0.1.0'
+            version=f'%(prog)s {__version__}'
         )
         
         return parser

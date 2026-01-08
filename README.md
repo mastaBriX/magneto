@@ -2,7 +2,7 @@
 
 ![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)
+![Version](https://img.shields.io/badge/version-0.1.1-orange.svg)
 ![GitHub](https://img.shields.io/github/stars/mastaBriX/magneto?style=social)
 ![GitHub](https://img.shields.io/github/forks/mastaBriX/magneto?style=social)
 
