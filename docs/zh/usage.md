@@ -202,6 +202,116 @@ magneto folder/ -v --include-trackers -o output.txt
 magneto ~/Downloads/ -r -f full -o ~/magnets.txt
 ```
 
+## 在代码中嵌入使用
+
+除了命令行工具，Magneto 还提供了 Python API，可以直接在代码中使用。
+
+### 快速开始
+
+使用 `torrent_to_magnet` 函数是最简单的集成方式：
+
+```python
+from magneto import torrent_to_magnet
+
+# 从文件路径转换
+magnet, info_hash, metadata = torrent_to_magnet("path/to/file.torrent")
+print(f"磁力链接: {magnet}")
+print(f"Info Hash: {info_hash}")
+print(f"文件名: {metadata['name']}")
+
+# 从 URL 转换
+magnet, info_hash, metadata = torrent_to_magnet("https://example.com/file.torrent")
+
+# 包含 tracker 信息
+magnet, info_hash, metadata = torrent_to_magnet(
+    "file.torrent", 
+    include_trackers=True
+)
+```
+
+### 批量处理示例
+
+```python
+from pathlib import Path
+from magneto import torrent_to_magnet
+
+def batch_convert(folder_path: str):
+    """批量转换文件夹中的所有种子文件"""
+    folder = Path(folder_path)
+    results = []
+    
+    for torrent_file in folder.glob("*.torrent"):
+        try:
+            magnet, info_hash, metadata = torrent_to_magnet(torrent_file)
+            results.append({
+                "file": str(torrent_file),
+                "magnet": magnet,
+                "info_hash": info_hash,
+                "name": metadata["name"]
+            })
+            print(f"✓ {torrent_file.name}")
+        except Exception as e:
+            print(f"✗ {torrent_file.name}: {e}")
+    
+    return results
+
+# 使用示例
+results = batch_convert("downloads/")
+```
+
+### 处理 URL 示例
+
+```python
+from magneto import torrent_to_magnet
+
+def convert_from_url(url: str):
+    """从 URL 下载并转换种子文件"""
+    try:
+        magnet, info_hash, metadata = torrent_to_magnet(url, include_trackers=True)
+        print(f"磁力链接: {magnet}")
+        print(f"来源: {metadata.get('source_url', 'N/A')}")
+        return magnet
+    except IOError as e:
+        print(f"下载失败: {e}")
+    except ValueError as e:
+        print(f"文件格式错误: {e}")
+
+# 使用示例
+convert_from_url("https://example.com/torrent.torrent")
+```
+
+### 错误处理
+
+```python
+from magneto import torrent_to_magnet
+
+try:
+    magnet, info_hash, metadata = torrent_to_magnet("file.torrent")
+except IOError as e:
+    print(f"文件读取错误: {e}")
+except ValueError as e:
+    print(f"文件格式错误: {e}")
+except ImportError as e:
+    print(f"依赖缺失: {e}")
+```
+
+### 返回值说明
+
+`torrent_to_magnet` 函数返回一个三元组：
+
+1. **magnet_link** (str): 生成的磁力链接
+2. **info_hash** (str): 种子的 Info Hash（十六进制字符串，大写）
+3. **metadata** (Dict): 元数据字典，包含：
+   - `name`: 文件名
+   - `trackers`: Tracker 列表（即使 `include_trackers=False` 也会包含）
+   - `info_hash`: Info Hash
+   - `file_size`: 文件大小（字节）
+   - `source_url`: 如果输入是 URL，则包含源 URL
+
+### 更多 API 用法
+
+如需更高级的功能（如自定义输出格式、批量处理等），请参考 [API 参考文档](/zh/api-reference)。
+
 ## 命令行参数参考
 
 ### 位置参数

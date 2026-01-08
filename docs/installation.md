@@ -2,11 +2,46 @@
 
 Magneto provides multiple installation methods. You can choose the one that best suits your needs.
 
-## Using uv (Recommended)
+## From PyPI (Recommended)
+
+The easiest way to install Magneto is using pip:
+
+```bash
+pip install magneto-cli
+```
+
+Or using uv:
+
+```bash
+uv pip install magneto-cli
+```
+
+After installation, you can use the `magneto` command directly:
+
+```bash
+magneto --help
+```
+
+## From Source
+
+If you want to install from source for development:
+
+### Using pip
+
+```bash
+# Clone the repository
+git clone https://github.com/mastaBriX/magneto.git
+cd magneto
+
+# Install in development mode
+pip install -e .
+```
+
+### Using uv
 
 `uv` is a fast Python package manager that is fully compatible with `pyproject.toml`.
 
-### 1. Install uv
+#### 1. Install uv
 
 **Windows (PowerShell):**
 ```powershell
@@ -18,11 +53,15 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 2. Sync Dependencies
+#### 2. Sync Dependencies
 
 Run in the project root directory:
 
 ```bash
+# Clone the repository
+git clone https://github.com/mastaBriX/magneto.git
+cd magneto
+
 # Sync dependencies and install project (development mode)
 uv sync
 
@@ -30,39 +69,11 @@ uv sync
 uv run magneto file.torrent
 uv run magneto folder/ -r -v
 
-# Install to current environment
-uv pip install -e .
-
-# Install development dependencies (if configured)
+# Install development dependencies
 uv sync --extra dev
 
 # View project information
 uv tree
-```
-
-## Using pip
-
-### Install from Source
-
-```bash
-# Clone repository (if not already done)
-git clone https://github.com/mastaBriX/magneto.git
-cd magneto
-
-# Install project (pip automatically reads pyproject.toml)
-pip install -e .
-```
-
-### Install Dependencies Directly
-
-```bash
-pip install bencode.py colorama
-```
-
-Then you can run `main.py` directly:
-
-```bash
-python main.py file.torrent
 ```
 
 ## Verify Installation

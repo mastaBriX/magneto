@@ -2,11 +2,46 @@
 
 Magneto предоставляет несколько методов установки. Вы можете выбрать тот, который лучше всего подходит для ваших нужд.
 
-## Использование uv (Рекомендуется)
+## Из PyPI (Рекомендуется)
+
+Самый простой способ установить Magneto — использовать pip:
+
+```bash
+pip install magneto-cli
+```
+
+Или используя uv:
+
+```bash
+uv pip install magneto-cli
+```
+
+После установки вы можете использовать команду `magneto` напрямую:
+
+```bash
+magneto --help
+```
+
+## Из исходного кода
+
+Если вы хотите установить из исходного кода для разработки:
+
+### Использование pip
+
+```bash
+# Клонировать репозиторий
+git clone https://github.com/mastaBriX/magneto.git
+cd magneto
+
+# Установить в режиме разработки
+pip install -e .
+```
+
+### Использование uv
 
 `uv` — это быстрый менеджер пакетов Python, полностью совместимый с `pyproject.toml`.
 
-### 1. Установка uv
+#### 1. Установка uv
 
 **Windows (PowerShell):**
 ```powershell
@@ -18,11 +53,15 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 2. Синхронизация зависимостей
+#### 2. Синхронизация зависимостей
 
 Запустите в корневом каталоге проекта:
 
 ```bash
+# Клонировать репозиторий
+git clone https://github.com/mastaBriX/magneto.git
+cd magneto
+
 # Синхронизировать зависимости и установить проект (режим разработки)
 uv sync
 
@@ -30,39 +69,11 @@ uv sync
 uv run magneto file.torrent
 uv run magneto folder/ -r -v
 
-# Установить в текущую среду
-uv pip install -e .
-
-# Установить зависимости разработки (если настроено)
+# Установить зависимости разработки
 uv sync --extra dev
 
 # Просмотреть информацию о проекте
 uv tree
-```
-
-## Использование pip
-
-### Установка из исходного кода
-
-```bash
-# Клонировать репозиторий (если еще не сделано)
-git clone https://github.com/mastaBriX/magneto.git
-cd magneto
-
-# Установить проект (pip автоматически читает pyproject.toml)
-pip install -e .
-```
-
-### Прямая установка зависимостей
-
-```bash
-pip install bencode.py colorama
-```
-
-Затем вы можете запустить `main.py` напрямую:
-
-```bash
-python main.py file.torrent
 ```
 
 ## Проверка установки

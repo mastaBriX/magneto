@@ -13,9 +13,9 @@
    python3 --version
    ```
 
-2. **Зависимости установлены**
+2. **Magneto установлен**
    ```bash
-   pip install bencode.py colorama
+   pip install magneto-cli
    ```
 
 ## Самый простой способ использования

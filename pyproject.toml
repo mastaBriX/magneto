@@ -1,5 +1,5 @@
 [project]
-name = "magneto"
+name = "magneto-cli"
 version = "0.1.0"
 description = "Command-line tool for batch converting torrent files to magnet links"
 readme = "README.md"

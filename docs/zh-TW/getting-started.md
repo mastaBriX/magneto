@@ -13,9 +13,9 @@
    python3 --version
    ```
 
-2. **安裝依賴套件**
+2. **安裝 Magneto**
    ```bash
-   pip install bencode.py colorama
+   pip install magneto-cli
    ```
 
 ## 最簡單的使用方式

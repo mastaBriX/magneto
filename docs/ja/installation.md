@@ -2,11 +2,46 @@
 
 Magneto は複数のインストール方法を提供しています。ニーズに最適な方法を選択できます。
 
-## uv を使用（推奨）
+## PyPI からインストール（推奨）
+
+最も簡単な方法は、pip を使用して PyPI からインストールすることです：
+
+```bash
+pip install magneto-cli
+```
+
+または uv を使用：
+
+```bash
+uv pip install magneto-cli
+```
+
+インストール後、`magneto` コマンドを直接使用できます：
+
+```bash
+magneto --help
+```
+
+## ソースからインストール
+
+開発のためにソースからインストールする場合：
+
+### pip を使用
+
+```bash
+# リポジトリをクローン
+git clone https://github.com/mastaBriX/magneto.git
+cd magneto
+
+# 開発モードでインストール
+pip install -e .
+```
+
+### uv を使用
 
 `uv` は `pyproject.toml` と完全に互換性のある高速な Python パッケージマネージャーです。
 
-### 1. uv のインストール
+#### 1. uv のインストール
 
 **Windows (PowerShell):**
 ```powershell
@@ -18,11 +53,15 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### 2. 依存関係の同期
+#### 2. 依存関係の同期
 
 プロジェクトのルートディレクトリで実行：
 
 ```bash
+# リポジトリをクローン
+git clone https://github.com/mastaBriX/magneto.git
+cd magneto
+
 # 依存関係を同期し、プロジェクトをインストール（開発モード）
 uv sync
 
@@ -30,39 +69,11 @@ uv sync
 uv run magneto file.torrent
 uv run magneto folder/ -r -v
 
-# 現在の環境にインストール
-uv pip install -e .
-
-# 開発依存関係をインストール（設定されている場合）
+# 開発依存関係をインストール
 uv sync --extra dev
 
 # プロジェクト情報を表示
 uv tree
-```
-
-## pip を使用
-
-### ソースからインストール
-
-```bash
-# リポジトリをクローン（まだの場合）
-git clone https://github.com/mastaBriX/magneto.git
-cd magneto
-
-# プロジェクトをインストール（pip は自動的に pyproject.toml を読み取る）
-pip install -e .
-```
-
-### 依存関係を直接インストール
-
-```bash
-pip install bencode.py colorama
-```
-
-その後、`main.py` を直接実行できます：
-
-```bash
-python main.py file.torrent
 ```
 
 ## インストールの確認

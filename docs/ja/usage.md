@@ -1,4 +1,4 @@
-﻿# 使用方法
+# 使用方法
 
 このガイドでは、Magneto のすべての機能と使用方法について詳しく説明します。
 
@@ -201,6 +201,116 @@ magneto folder/ -v --include-trackers -o output.txt
 ```bash
 magneto ~/Downloads/ -r -f full -o ~/magnets.txt
 ```
+
+## コードに埋め込んで使用
+
+コマンドラインツールに加えて、Magneto は Python API も提供しており、コード内で直接使用できます。
+
+### クイックスタート
+
+`torrent_to_magnet` 関数を使用するのが最も簡単な統合方法です：
+
+```python
+from magneto import torrent_to_magnet
+
+# ファイルパスから変換
+magnet, info_hash, metadata = torrent_to_magnet("path/to/file.torrent")
+print(f"マグネットリンク: {magnet}")
+print(f"Info Hash: {info_hash}")
+print(f"ファイル名: {metadata['name']}")
+
+# URL から変換
+magnet, info_hash, metadata = torrent_to_magnet("https://example.com/file.torrent")
+
+# トラッカー情報を含める
+magnet, info_hash, metadata = torrent_to_magnet(
+    "file.torrent", 
+    include_trackers=True
+)
+```
+
+### バッチ処理の例
+
+```python
+from pathlib import Path
+from magneto import torrent_to_magnet
+
+def batch_convert(folder_path: str):
+    """フォルダ内のすべてのトーrentファイルを一括変換"""
+    folder = Path(folder_path)
+    results = []
+    
+    for torrent_file in folder.glob("*.torrent"):
+        try:
+            magnet, info_hash, metadata = torrent_to_magnet(torrent_file)
+            results.append({
+                "file": str(torrent_file),
+                "magnet": magnet,
+                "info_hash": info_hash,
+                "name": metadata["name"]
+            })
+            print(f"✓ {torrent_file.name}")
+        except Exception as e:
+            print(f"✗ {torrent_file.name}: {e}")
+    
+    return results
+
+# 使用例
+results = batch_convert("downloads/")
+```
+
+### URL 処理の例
+
+```python
+from magneto import torrent_to_magnet
+
+def convert_from_url(url: str):
+    """URL からダウンロードしてトーrentファイルを変換"""
+    try:
+        magnet, info_hash, metadata = torrent_to_magnet(url, include_trackers=True)
+        print(f"マグネットリンク: {magnet}")
+        print(f"ソース: {metadata.get('source_url', 'N/A')}")
+        return magnet
+    except IOError as e:
+        print(f"ダウンロード失敗: {e}")
+    except ValueError as e:
+        print(f"ファイル形式エラー: {e}")
+
+# 使用例
+convert_from_url("https://example.com/torrent.torrent")
+```
+
+### エラーハンドリング
+
+```python
+from magneto import torrent_to_magnet
+
+try:
+    magnet, info_hash, metadata = torrent_to_magnet("file.torrent")
+except IOError as e:
+    print(f"ファイル読み取りエラー: {e}")
+except ValueError as e:
+    print(f"ファイル形式エラー: {e}")
+except ImportError as e:
+    print(f"依存関係不足: {e}")
+```
+
+### 戻り値の説明
+
+`torrent_to_magnet` 関数は3要素のタプルを返します：
+
+1. **magnet_link** (str): 生成されたマグネットリンク
+2. **info_hash** (str): トーrentの Info Hash（16進数文字列、大文字）
+3. **metadata** (Dict): メタデータ辞書、以下を含む：
+   - `name`: ファイル名
+   - `trackers`: トラッカーリスト（`include_trackers=False` でも含まれる）
+   - `info_hash`: Info Hash
+   - `file_size`: ファイルサイズ（バイト）
+   - `source_url`: 入力が URL の場合、ソース URL を含む
+
+### より高度な API の使用
+
+カスタム出力形式、バッチ処理などのより高度な機能が必要な場合は、[API リファレンス](/ja/api-reference) を参照してください。
 
 ## コマンドライン引数リファレンス
 

@@ -1,4 +1,4 @@
-﻿# Руководство по использованию
+# Руководство по использованию
 
 Это руководство предоставляет подробную информацию о всех функциях и методах использования Magneto.
 
@@ -201,6 +201,116 @@ magneto folder/ -v --include-trackers -o output.txt
 ```bash
 magneto ~/Downloads/ -r -f full -o ~/magnets.txt
 ```
+
+## Использование в коде
+
+Помимо инструмента командной строки, Magneto также предоставляет Python API, который можно использовать непосредственно в коде.
+
+### Быстрый старт
+
+Использование функции `torrent_to_magnet` — это самый простой способ интеграции:
+
+```python
+from magneto import torrent_to_magnet
+
+# Преобразование из пути к файлу
+magnet, info_hash, metadata = torrent_to_magnet("path/to/file.torrent")
+print(f"Магнитная ссылка: {magnet}")
+print(f"Info Hash: {info_hash}")
+print(f"Имя файла: {metadata['name']}")
+
+# Преобразование из URL
+magnet, info_hash, metadata = torrent_to_magnet("https://example.com/file.torrent")
+
+# Включить информацию о трекерах
+magnet, info_hash, metadata = torrent_to_magnet(
+    "file.torrent", 
+    include_trackers=True
+)
+```
+
+### Пример пакетной обработки
+
+```python
+from pathlib import Path
+from magneto import torrent_to_magnet
+
+def batch_convert(folder_path: str):
+    """Пакетное преобразование всех торрент-файлов в папке"""
+    folder = Path(folder_path)
+    results = []
+    
+    for torrent_file in folder.glob("*.torrent"):
+        try:
+            magnet, info_hash, metadata = torrent_to_magnet(torrent_file)
+            results.append({
+                "file": str(torrent_file),
+                "magnet": magnet,
+                "info_hash": info_hash,
+                "name": metadata["name"]
+            })
+            print(f"✓ {torrent_file.name}")
+        except Exception as e:
+            print(f"✗ {torrent_file.name}: {e}")
+    
+    return results
+
+# Пример использования
+results = batch_convert("downloads/")
+```
+
+### Пример обработки URL
+
+```python
+from magneto import torrent_to_magnet
+
+def convert_from_url(url: str):
+    """Загрузить и преобразовать торрент-файл из URL"""
+    try:
+        magnet, info_hash, metadata = torrent_to_magnet(url, include_trackers=True)
+        print(f"Магнитная ссылка: {magnet}")
+        print(f"Источник: {metadata.get('source_url', 'N/A')}")
+        return magnet
+    except IOError as e:
+        print(f"Ошибка загрузки: {e}")
+    except ValueError as e:
+        print(f"Ошибка формата файла: {e}")
+
+# Пример использования
+convert_from_url("https://example.com/torrent.torrent")
+```
+
+### Обработка ошибок
+
+```python
+from magneto import torrent_to_magnet
+
+try:
+    magnet, info_hash, metadata = torrent_to_magnet("file.torrent")
+except IOError as e:
+    print(f"Ошибка чтения файла: {e}")
+except ValueError as e:
+    print(f"Ошибка формата файла: {e}")
+except ImportError as e:
+    print(f"Отсутствует зависимость: {e}")
+```
+
+### Описание возвращаемых значений
+
+Функция `torrent_to_magnet` возвращает кортеж из трех элементов:
+
+1. **magnet_link** (str): Сгенерированная магнитная ссылка
+2. **info_hash** (str): Info Hash торрента (шестнадцатеричная строка, верхний регистр)
+3. **metadata** (Dict): Словарь метаданных, содержащий:
+   - `name`: Имя файла
+   - `trackers`: Список трекеров (включается даже если `include_trackers=False`)
+   - `info_hash`: Info Hash
+   - `file_size`: Размер файла (в байтах)
+   - `source_url`: Исходный URL, если входные данные — URL
+
+### Дополнительные возможности API
+
+Для более продвинутых функций (таких как пользовательские форматы вывода, пакетная обработка и т.д.) см. [Справочник API](/ru/api-reference).
 
 ## Справочник аргументов командной строки
 

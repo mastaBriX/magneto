@@ -202,6 +202,116 @@ magneto folder/ -v --include-trackers -o output.txt
 magneto ~/Downloads/ -r -f full -o ~/magnets.txt
 ```
 
+## Embed in Code
+
+In addition to the command-line tool, Magneto also provides a Python API that can be used directly in your code.
+
+### Quick Start
+
+Using the `torrent_to_magnet` function is the simplest way to integrate:
+
+```python
+from magneto import torrent_to_magnet
+
+# Convert from file path
+magnet, info_hash, metadata = torrent_to_magnet("path/to/file.torrent")
+print(f"Magnet Link: {magnet}")
+print(f"Info Hash: {info_hash}")
+print(f"File Name: {metadata['name']}")
+
+# Convert from URL
+magnet, info_hash, metadata = torrent_to_magnet("https://example.com/file.torrent")
+
+# Include tracker information
+magnet, info_hash, metadata = torrent_to_magnet(
+    "file.torrent", 
+    include_trackers=True
+)
+```
+
+### Batch Processing Example
+
+```python
+from pathlib import Path
+from magneto import torrent_to_magnet
+
+def batch_convert(folder_path: str):
+    """Batch convert all torrent files in a folder"""
+    folder = Path(folder_path)
+    results = []
+    
+    for torrent_file in folder.glob("*.torrent"):
+        try:
+            magnet, info_hash, metadata = torrent_to_magnet(torrent_file)
+            results.append({
+                "file": str(torrent_file),
+                "magnet": magnet,
+                "info_hash": info_hash,
+                "name": metadata["name"]
+            })
+            print(f"✓ {torrent_file.name}")
+        except Exception as e:
+            print(f"✗ {torrent_file.name}: {e}")
+    
+    return results
+
+# Usage example
+results = batch_convert("downloads/")
+```
+
+### URL Processing Example
+
+```python
+from magneto import torrent_to_magnet
+
+def convert_from_url(url: str):
+    """Download and convert torrent file from URL"""
+    try:
+        magnet, info_hash, metadata = torrent_to_magnet(url, include_trackers=True)
+        print(f"Magnet Link: {magnet}")
+        print(f"Source: {metadata.get('source_url', 'N/A')}")
+        return magnet
+    except IOError as e:
+        print(f"Download failed: {e}")
+    except ValueError as e:
+        print(f"File format error: {e}")
+
+# Usage example
+convert_from_url("https://example.com/torrent.torrent")
+```
+
+### Error Handling
+
+```python
+from magneto import torrent_to_magnet
+
+try:
+    magnet, info_hash, metadata = torrent_to_magnet("file.torrent")
+except IOError as e:
+    print(f"File read error: {e}")
+except ValueError as e:
+    print(f"File format error: {e}")
+except ImportError as e:
+    print(f"Missing dependency: {e}")
+```
+
+### Return Value Description
+
+The `torrent_to_magnet` function returns a tuple of three elements:
+
+1. **magnet_link** (str): Generated magnet link
+2. **info_hash** (str): Torrent info hash (hexadecimal string, uppercase)
+3. **metadata** (Dict): Metadata dictionary containing:
+   - `name`: File name
+   - `trackers`: List of trackers (included even if `include_trackers=False`)
+   - `info_hash`: Info hash
+   - `file_size`: File size in bytes
+   - `source_url`: Source URL if input is a URL
+
+### More API Usage
+
+For more advanced features (such as custom output formats, batch processing, etc.), please refer to the [API Reference](/api-reference).
+
 ## Command-Line Arguments Reference
 
 ### Positional Arguments
