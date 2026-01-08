@@ -1,9 +1,8 @@
 name: Publish to PyPI
 
 on:
-  push:
-    tags:
-      - 'v*'  # 匹配所有以 v 开头的 tag，如 v0.1.0, v1.0.0 等
+  release:
+    types: [created]  # 当新的 GitHub release 被创建时触发
 
 permissions:
   contents: read
@@ -17,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # 获取完整历史记录，用于版本信息
-          ref: ${{ github.ref }}  # 检出对应的 tag
+          ref: ${{ github.event.release.tag_name }}  # 检出 release 对应的 tag
           fetch-tags: true  # 获取所有 tags
 
       - name: Set up Python
@@ -30,14 +29,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install build twine
 
-      - name: Extract version from tag
+      - name: Extract version from release tag
         id: tag_version
         run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/}
+          TAG_NAME="${{ github.event.release.tag_name }}"
           # 移除 'v' 前缀（如果存在）
           VERSION=${TAG_NAME#v}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          echo "Release: ${{ github.event.release.name }}"
           echo "Tag: $TAG_NAME, Version: $VERSION"
           
           # 验证 tag 格式（应该是语义化版本号）
@@ -50,8 +50,10 @@ jobs:
           # 获取远程分支信息
           git fetch origin master:refs/remotes/origin/master 2>/dev/null || true
           
-          # 检查 tag 指向的 commit 是否在 master 分支上
-          TAG_COMMIT=$(git rev-parse ${{ github.ref }})
+          # 检查 release tag 指向的 commit 是否在 master 分支上
+          TAG_NAME="${{ github.event.release.tag_name }}"
+          TAG_COMMIT=$(git rev-parse "$TAG_NAME")
+          echo "Tag: $TAG_NAME"
           echo "Tag commit: $TAG_COMMIT"
           
           # 检查 commit 是否在 master 分支的历史中
