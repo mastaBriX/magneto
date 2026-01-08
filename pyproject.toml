@@ -1,6 +1,6 @@
 [project]
 name = "magneto-cli"
-version = "0.1.1"
+version = "0.1.2"
 description = "Command-line tool for batch converting torrent files to magnet links"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -28,7 +28,7 @@ dependencies = [
 ]
 
 [project.scripts]
-magneto = "main:main"
+magneto = "magneto.main:main"
 
 [project.urls]
 Homepage = "https://github.com/mastaBriX/magneto"
