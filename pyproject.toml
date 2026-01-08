@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Command-line tool for batch converting torrent files to magnet links"
 readme = "README.md"
 requires-python = ">=3.7"
-license = {text = "MIT"}
+license = {file = "LICENSE"}
 authors = [
     {name = "Yuze Xie", email = "xyzbrianx@gmail.com"}
 ]
@@ -33,7 +33,10 @@ magneto = "main:main"
 [project.urls]
 Homepage = "https://github.com/mastaBriX/magneto"
 Repository = "https://github.com/mastaBriX/magneto"
+Documentation = "https://mastabrix.github.io/magneto/"
 Issues = "https://github.com/mastaBriX/magneto/issues"
+"Bug Reports" = "https://github.com/mastaBriX/magneto/issues"
+"Source Code" = "https://github.com/mastaBriX/magneto"
 
 [build-system]
 requires = ["hatchling"]

@@ -1,6 +1,17 @@
 # Magneto
 
+![Python Version](https://img.shields.io/badge/python-3.7%2B-blue.svg)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Version](https://img.shields.io/badge/version-0.1.0-orange.svg)
+![GitHub](https://img.shields.io/github/stars/mastaBriX/magneto?style=social)
+![GitHub](https://img.shields.io/github/forks/mastaBriX/magneto?style=social)
+
 A powerful and user-friendly command-line tool for batch converting torrent files (.torrent) to magnet links.
+
+[Docs](https://mastabrix.github.io/magneto/) | [中文文档](https://mastabrix.github.io/magneto/zh/) 
+
+
+> ⚠️ **Warning**: This project is still in early development. Please use with caution. Features may be incomplete and APIs may change.
 
 ## ✨ Features
 
@@ -204,30 +215,6 @@ pytest -m unit
 pytest -m integration
 ```
 
-## 🏗️ Project Structure
-
-```
-magneto/
-├── magneto/           # Main package
-│   ├── __init__.py   # Package initialization
-│   ├── core.py       # Core conversion logic
-│   ├── parser.py     # Command-line argument parsing
-│   ├── ui.py         # User interface and output
-│   └── utils.py      # Utility functions
-├── main.py           # Program entry point
-├── tests/            # Test suite
-│   ├── __init__.py
-│   ├── conftest.py   # Pytest fixtures and configuration
-│   ├── test_core.py   # Core module tests
-│   ├── test_utils.py # Utility function tests
-│   ├── test_parser.py # Parser tests
-│   ├── test_ui.py    # UI tests
-│   └── test_integration.py # Integration tests
-├── pyproject.toml    # Project configuration (for uv/pip)
-└── README.md         # Documentation
-```
-
-> **Note**: This project uses `pyproject.toml` for dependency and configuration management. `uv` is recommended, but pip also fully supports `pyproject.toml`.
 
 ## 🔧 Dependencies
 
